@@ -12,6 +12,9 @@ this app has the following features:
 * Run the schema.sql in MySQL workbench
 * add and change any data to the tables using the seeds.sql as an example template
 
+
+![](https://github.com/rainesand/employeeTracker/blob/master/img/mainpage.PNG)
+![](https://github.com/rainesand/employeeTracker/blob/master/img/add%20role%20function.PNG)
 ## updates
 
 future iterations of this application will include:
