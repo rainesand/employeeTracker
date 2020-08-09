@@ -1,8 +1,17 @@
-// dependencies
 const inquirer = require('inquirer');
 const mysql = require('mysql');
-const conTab = require('console.table');
-const connection = require('./db/db.js');
+const connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'password',
+    database: 'employee_trackerDB'
+});
+connection.connect(function(err){
+    if (err) throw err;
+    console.log('listening on port:' + connection.port);
+    init();
+});
 
 const init = function(){
     inquirer.prompt({
@@ -16,11 +25,10 @@ const init = function(){
             'View departments',
             'View roles',
             'View employees',
-            'Update employee roles',
         ]
     }).then(function(res){
         console.log(res);
-        switch (res.initialize) {
+        switch (res.initialize){
             case 'Add department':
                 addDepartment();
                 break;
@@ -39,13 +47,59 @@ const init = function(){
             case 'View employees':
                 viewEmployees();
                 break;
-            case 'Update employee roles':
-                updateEmpRole();
-                break;
         }
     });
 };
-init();
+function addDepartment(){
+    inquirer.prompt({
+        type: "input",
+        message: "Please enter the new department name",
+        name: "addDept"
+      }).then(function(res){
+        connection.query(
+          "INSERT INTO department SET ?",
+          {
+            name: res.addDept
+          },
+          function(err,res){
+            if (err) throw err;
+            console.table(res)
+          });
+        init();
+      });
+  }
+function addRole(){
+    inquirer.prompt([
+        {
+          type: "input",
+          message: "Please enter the new employee title",
+          name: "title"
+        },
+        {
+          type: "input",
+          message: "Please enter the new employee salary",
+          name: "salary"
+        },
+        {
+          type: "input",
+          message: "Please enter the new employee department id",
+          name: "DepId"
+        }
+      ]).then(function(res){
+        connection.query(
+          "INSERT INTO role SET ?",
+          {
+            title: res.title,
+            salary: res.salary,
+            department_id: res.DepId
+          },
+          function(err,res){
+            if (err) throw err;
+            console.table(res)
+          });
+        init();
+      });
+  }
 function addEmployee(){
     inquirer.prompt([
         {
@@ -66,9 +120,8 @@ function addEmployee(){
             manager_id: null
         },function(err,res){
             if (err) throw err;
-            console.table(res);
-        }
-        );
+            console.table(res)
+        });
         init();
     });
 }
